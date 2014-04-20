@@ -1,3 +1,7 @@
+/*
+batch("~/src/maxima-code/share/contrib/gentran/test/rtest_gentran.mac", 'test);
+*/
+
 (kill(all), 0);
 0$
 
@@ -38,6 +42,11 @@ gentran_to_strings(a : 10);
 
 block([a: 42], gentran_to_strings(a : 10));
 ["      a=10.0"]$
+
+(delete_file("di.f"),
+  gentranin("di.template", ["di.f"]),
+  compare_files("di.f", "di.output"));
+true$
 
 /*
 (k : 1/(2*m)*p^2,
