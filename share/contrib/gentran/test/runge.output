@@ -38,7 +38,7 @@ c
 c
 c  Loop
 c
-25009 if (tt .ge. tf) goto 25010
+25001 if (tt .ge. tf) goto 25002
           pn=-1.0/2.0*b*hh-1.0/96.0*b*hh**5*k0**2/m**2+b*hh**3*k0/12.0/m
      .     +p-1.0/96.0*hh**6*k0**3*p/m**3+hh**4*k0**2*p/8.0/m**2-1.0/2.0
      .     *hh**2*k0*p/m-hh*k0*q-1.0/48.0*hh**5*k0**3*q/m**2+hh**3*k0**2
@@ -51,7 +51,7 @@ c
           p=pn
           tt=tt+hh
           write(9,910) tt, q, p
-          goto 25009
-25010 continue
+          goto 25001
+25002 continue
       stop
       end

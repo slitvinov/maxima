@@ -34,12 +34,12 @@
 	       (cond ((eq c *cr*)
 		      (progn (pprin2 *cr*)
 			     (setq c (procfortcomm))))
-                     ((eq c '<)
+                     ((eq c #\<)
 		      (setq c (read-char nil nil '$eof$))
-		      (cond ((eq c '<)
+		      (cond ((eq c #\<)
 			     (setq c (procactive)))
 			    (t
-			     (pprin2 '<)
+			     (pprin2 #\<)
 			     (pprin2 c)
 			     (setq c (read-char nil nil '$eof$)))))
 		     (t
@@ -147,6 +147,17 @@
 			     (c)))))
 	(go loop)))
 
+(defun make-line-for-mread-aux (st)
+  (coerce (reverse (cons #\$ st)) 'string))
+
+(defun make-line-for-mread (st)
+  (if (and (length st) (eq (first st) '#\>))
+      st
+      (mread (make-string-input-stream  (make-line-for-mread-aux st)) nil)))
+
+(defun my-third (s)
+  (third s))
+
 (defun $readvexp (in)
   ;  $readvexp is the parser for expressions and statements        ;
   ;  inside "<<" and ">>" within the template file.                ;
@@ -184,6 +195,8 @@
 	       (go loop)))
 	(setq oldst st)
 	(cond ((null st) (return nil))
-	      ((setq test (let (*prompt-on-read-hang*) (mread iport nil))) (return (third test))))
+	      ((setq test (let (*prompt-on-read-hang*) 
+			    (make-line-for-mread st)))
+	       (return (my-third test))))
 	(setq test (tyi iport))
 	(go c)))
