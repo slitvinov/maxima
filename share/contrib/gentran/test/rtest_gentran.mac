@@ -1,0 +1,57 @@
+(kill(all), 0);
+0$
+
+(load("~/src/maxima-code/share/contrib/gentran/gentran.lisp"),
+  delete_file(infile):= block([f], f: openw(infile), close(f)),
+  read_file_to_strings(infile):= block([l, st: openr(infile), out: []],
+    while (l: readline(st))#false do out: cons(l, out),
+    close(st),
+    reverse(out)),
+  compare_files(A, B):=  is( equal(read_file_to_strings(A),
+      read_file_to_strings(B))),
+  with_gentran_output([arg])::= buildq([infile: first(arg),
+    commands: rest(arg)], block(
+      delete_file(infile),
+      gentranout(infile),
+      gentran(splice(commands)),
+      gentranshut(infile))),
+  gentran_to_strings([arg])::=buildq([arg],
+    (with_gentran_output("_tmp_.dat", splice(arg)),
+    read_file_to_strings("_tmp_.dat"))),
+    'done);
+'done$
+
+gentranlang('c);
+?c$
+
+gentranlang('ratfor);
+?ratfor$
+
+gentranlang('fortran);
+?fortran$
+
+(gentranlang('fortran), ?\*gentranlang);
+?fortran$
+
+gentran_to_strings(a : 10);
+["      a=10.0"]$
+
+block([a: 42], gentran_to_strings(a : 10));
+["      a=10.0"]$
+
+/*
+(k : 1/(2*m)*p^2,
+u : k0/2*q^2,
+d : b/2*qdot,
+h : k + u,
+batch("rk.in"),
+batch("ham.in"),
+delete_file("runge.f"),
+gentranin("runge.template", ["runge.f"]));
+0$
+*/
+
+gentran_to_strings( function("real", f(x, y)), body( x:x^2, y:y^2, f:abs(x-y)));
+["      real function f(x,y)","      x=x**2","      y=y**2",
+ "      f=abs(-x+y)","      return","      end"]$
+

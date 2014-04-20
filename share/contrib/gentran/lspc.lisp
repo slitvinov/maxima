@@ -39,7 +39,7 @@
 (put 'leqp     '*cop* '|<=|)
 (put 'plus     '*cop* '|+|)
 (put 'times    '*cop* '|*|)
-(put 'quotient '*cop* '|//|)
+(put 'quotient '*cop* '|/|)
 (put 'minus    '*cop* '|-|)
 (put 'or       '*cop* "||")
 ;;                                  ;;

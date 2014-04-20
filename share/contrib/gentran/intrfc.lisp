@@ -46,7 +46,7 @@
 	(return (gentran forms flist))))
 
 
-(defmfun $gentranout (flist)
+(defun $gentranout (&rest flist)
   ;                                                                     ;
   ;  gentranout(f1,f2,...,fn);  -->  (gentranoutpush (f1 f2 ... fn) t)  ;
   ;                                                                     ;
@@ -59,14 +59,14 @@
   (gentranoutpush flist t))
 
 
-(defmfun $gentranshut (flist)
+(defmspec $gentranshut (flist)
   ;                                                                 ;
   ;  gentranshut(f1,f2,...,fn);  -->  (gentranshut (f1 f2 ... fn))  ;
   ;                                                                 ;
-  (gentranshut flist))
+  (gentranshut (cdr flist)))
 
 
-(defmfun $gentranpush (flist)
+(defun $gentranpush (flist)
   ;                                                                        ;
   ;  gentranpush(f1,f2,...,fn);  -->  (gentranoutpush (f1 f2 ... fn) nil)  ;
   ;                                                                        ;
@@ -79,21 +79,21 @@
   (gentranoutpush flist nil))
 
 
-(defmfun $gentranpop (flist)
+(defmspec $gentranpop (flist)
   ;                                                               ;
   ;  gentranpop(f1,f2,...,fn);  -->  (gentranpop (f1 f2 ... fn))  ;
   ;                                                               ;
-  (gentranpop flist))
+  (gentranpop (cdr flist)))
 
 
-(defmfun $gentranin (forms)
+(defmspec $gentranin (forms)
   ;                                              ;
   ;  gentranin(f1,f2,...,fn {,[f1,f2,...,fm]});  ;
   ;      -->                                     ;
   ;  (gentranin (f1 f2 ... fn) (f1 f2 ... fm))   ;
   ;                                              ;
   (prog (outflist)
-	(setq forms (reverse forms))
+	(setq forms (reverse (cdr forms)))
 	(cond ((and (listp (car forms))
 		    (listp (caar forms))
 		    (equal (caaar forms) 'mlist))
@@ -103,13 +103,13 @@
 	(return (gentranin forms outflist))))
 
 
-(defmfun $on (flaglist)
+(defmspec $on (flaglist)
   ;                              ;
   ;  on(flag1,flag2,...,flagn);  ;
   ;    -->                       ;
   ;  (onoff flaglist t)          ;
   ;                              ;
-  (onoff flaglist t))
+  (onoff (cdr flaglist) t))
 
 (defun on (flaglist)
   ;                                          ;
@@ -118,13 +118,13 @@
   (onoff flaglist t))
 
 
-(defmfun $off (flaglist)
+(defmspec $off (flaglist)
   ;                               ;
   ;  off(flag1,flag2,...,flagn);  ;
   ;    -->                        ;
   ;  (onoff flaglist nil)         ;
   ;                               ;
-  (onoff flaglist nil))
+  (onoff (cdr flaglist) nil))
 
 (defun off (flaglist)
   ;                                             ;
@@ -263,9 +263,7 @@
   (prog (holdich)
 	(foreach inf in (setq inlist (preproc inlist)) do
 		 (cond ((listp inf)
-			(gentranerr 'e inf "wrong type of arg" nil))
-		       ((and (not (filep (mkfil inf))) (not (eq inf 't)))
-			(gentranerr 'e inf "nonexistent input file" nil))))
+			(gentranerr 'e inf "wrong type of arg" nil))))
 	(cond (outlist
 	       (eval (list 'gentranoutpush (list 'quote outlist) nil))))
 	(setq holdich (rds nil))
@@ -279,7 +277,7 @@
 				     "template file already open for input"
 				     nil))
 			(t
-			 (pushinstk (cons inf (infile (mkfil inf))))))
+			 (pushinstk (cons inf (open inf :direction :input)))))
 		  (rds (cdr *currin*))
 		  (cond ((eq *gentranlang 'ratfor) (procrattem))
 			((eq *gentranlang 'c) (procctem))
@@ -306,7 +304,7 @@
   (foreach f in flags do
 	   (prog (flag funlist)
 		 (setq flag (setq f (stripdollar1 f)))
-		 (setq f (implode (cons '* (explode f))))
+		 (setq f (implode (cons '* (exploden f))))
 		 (set f onp)
 		 (cond ((setq funlist (assoc onp (get flag 'simpfg)))
 			(foreach form in (cdr funlist) do (eval form))))))
@@ -396,12 +394,11 @@
   (prog (hlang flag exp)
 	(setq hlang *gentranlang)
 	(setq *gentranlang lang)
-	(setq flag (intern (compress (append (explode '*)
-					     (explode lang)))))
+	(setq flag (intern (compress (append (explode2 '*)
+					     (explode2 lang)))))
 	(while (eval flag)
 	       (progn
-		(setq exp (gentranswitch1 (list ($readvexp (cons nil *currin*))
-						                   )))
+		 (setq exp (gentranswitch1 (list ($readvexp *currin*))))
 		(eval (list 'gentran (list 'quote exp) 'nil))))
 	(setq *gentranlang hlang)))
 
