@@ -48,6 +48,11 @@ block([a: 42], gentran_to_strings(a : 10));
   compare_files("di.f", "di.output"));
 true$
 
+(delete_file("di2.f"),
+  gentranin("di2.template", ["di2.f"]),
+  compare_files("di2.f", "di2.output"));
+true$
+
 /*
 (k : 1/(2*m)*p^2,
 u : k0/2*q^2,

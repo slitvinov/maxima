@@ -1,0 +1,10 @@
+C fortran code generated from di.template
+      program di
+
+      a=10.0
+        
+      b = a + 1.0
+      b=10.0
+        
+      stop
+      end
