@@ -147,16 +147,14 @@
 			     (c)))))
 	(go loop)))
 
-(defun make-line-for-mread-aux (st)
+(defun make-line-for-mread (st)
   (coerce (reverse (cons #\$ st)) 'string))
 
-(defun make-line-for-mread (st)
-  (if (and (length st) (eq (first st) '#\>))
+(defun parse2 (st)
+  (if (equal st (list '#\>))
       st
-      (mread (make-string-input-stream  (make-line-for-mread-aux st)) nil)))
-
-(defun my-third (s)
-  (third s))
+      (let (*prompt-on-read-hang*)
+	(mread (make-string-input-stream  (make-line-for-mread st)) nil))))
 
 (defun $readvexp (in)
   ;  $readvexp is the parser for expressions and statements        ;
@@ -195,8 +193,7 @@
 	       (go loop)))
 	(setq oldst st)
 	(cond ((null st) (return nil))
-	      ((setq test (let (*prompt-on-read-hang*) 
-			    (make-line-for-mread st)))
-	       (return (my-third test))))
+	      ((setq test (parse2 st))
+	       (return (third test))))
 	(setq test (tyi iport))
 	(go c)))
