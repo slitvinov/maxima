@@ -96,13 +96,13 @@
   (streamp m))
 
 
-(defmacro flag (&rest m)
+(defmacro flag (varlst fname)
 ;                                                   ;
 ; (flag varlst fname)  -->  (foreach v in varlst do ;
 ;                             (putprop v t fname))  ;
 ;                                                   ;
-  `(foreach v in ,(cadr m) do
-     (putprop v t ,(caddr m))))
+  `(foreach v in ,varlst do
+     (putprop v t ,fname)))
 
 
 (defun flagp (var fname)
