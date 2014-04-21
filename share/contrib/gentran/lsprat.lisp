@@ -43,6 +43,9 @@
 (put 'quotient '*ratforop* '|/|)
 (put 'expt     '*ratforop* '|**|)
 (put 'minus    '*ratforop* '|-|)
+(put '%e '*ratfornname* "exp(1)")
+(put '%pi '*ratforname* "(4.0*atan(1.0))")
+
 
 ;;                                        ;;
 ;;  lisp-to-ratfor translation functions  ;;

@@ -42,6 +42,9 @@
 (put 'quotient '*cop* '|/|)
 (put 'minus    '*cop* '|-|)
 (put 'or       '*cop* "||")
+(put '%e '*cname* "exp(1)")
+(put '%pi '*cname* "(4.0*atan(1.0))")
+
 ;;                                  ;;
 ;;  lisp-to-c transltion functions  ;;
 ;;                                  ;;
