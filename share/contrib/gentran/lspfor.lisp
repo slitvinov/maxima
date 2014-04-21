@@ -55,7 +55,9 @@
 (put 'expt     '*fortranop* '|**|)
 (put '-        '*fortranop* '|-|)
 (put 'minus    '*fortranop* '|-|)
-(put nil '*fortranname* ".false.")
+(put nil  '*fortranname* ".false.")
+(put '%e  '*fortranname* "EXP(1)")
+(put '%pi '*fortranname* "(4.0*ATAN(1.0))")
 
 ;;                                         ;;
 ;;  lisp-to-fortran translation functions  ;;
