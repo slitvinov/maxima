@@ -1,0 +1,16 @@
+      i=1
+25001 if (i .gt. 10) goto 25002
+          j=1
+25003     if (j .gt. 20) goto 25004
+              if ( .not. i .eq. j) goto 25005
+                  m(i,j)=1.0
+                  goto 25006
+25005         continue
+                  m(i,j)=0.0
+25006         continue
+              j=j+1
+              goto 25003
+25004     continue
+          i=i+1
+          goto 25001
+25002 continue

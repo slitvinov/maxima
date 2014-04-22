@@ -30,3 +30,22 @@ gentran( literal("c", cr,
 for i:1 thru 3 do
 	  for j:i thru 3 do
 	      gentran( lrsetq(mat[i,j], mat[i,j]) )$
+
+inv : mat^^(-1)$
+gentran( literal("c", cr,
+                       "c --- Calculate Inverse Matrix Values ---",
+                       cr, "c", cr) )$
+
+for i:1 thru 3 do
+          for j:i thru 3 do
+              gentran( lrsetq( inv[i,j], inv[i,j]) )$
+
+gentran( literal("c", cr,
+                       "c --- Copy Entries Across Main Diagonals ---",
+                       cr, "c", cr),
+               for i:1 thru 3 do
+                   for j:i+1 thru 3 do
+                   (   mat[j,i] : mat[i,j],  inv[j,i] : inv[i,j]   )
+             )$
+
+gentranshut("matrix.f")$

@@ -130,7 +130,7 @@
 ;                                     ;
 ; (mkfil arg)  -->  (stripdollar arg) ;
 ;                                     ;
-  (cons 'stripdollar m))
+  (stripdollar m))
 
 
 (defun posn ()
@@ -205,7 +205,7 @@
   `(dotimes (i ,m) (princ " ")))
 
 
-(defmacro while (exp stmt)
+(defmacro gentran-while (exp stmt)
 ;                                                          ;
 ; (while exp stmt)  -->  (prog ()                          ;
 ;                              loop                        ;
@@ -213,11 +213,7 @@
 ;                                     stmt                 ;
 ;                                     (go loop))))         ;
 ;                                                          ;
-  `(prog ()
-	 loop
-	 (cond (,exp
-	        ,stmt
-	        (go loop)))))
+  `(while ,exp ,stmt))
 
 
 (defmacro wrs (m)
