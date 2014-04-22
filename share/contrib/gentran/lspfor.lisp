@@ -160,7 +160,7 @@
 		(res1))
 	       (setq exp (cdr exp))
 	       (cond ((eq op '+)
-		      (while (setq exp (cdr exp))
+		      (gentran-while (setq exp (cdr exp))
                          (progn
 			  (setq res1 (fortexp1 (car exp) wt))
 			  (cond ((or (eq (car res1) '-)
@@ -170,7 +170,7 @@
 				(t
 				 (setq res (append res (cons op res1))))))))
 		     (t
-		      (while (setq exp (cdr exp))
+		      (gentran-while (setq exp (cdr exp))
                          (setq res (append res
 					   (cons op
 						 (fortexp1 (car exp) wt)))))))
@@ -179,7 +179,7 @@
 	(t
 	 (let ((res (cons (car exp) (cons '|(| (fortexp1 (cadr exp) 0)))))
               (setq exp (cdr exp))
-	      (while (setq exp (cdr exp))
+	      (gentran-while (setq exp (cdr exp))
                  (setq res (append res (cons '|,| (fortexp1 (car exp) 0)))))
               (aconc res '|)|)))))
 
@@ -235,7 +235,8 @@
   (prog (n1 hi incr result)
 	(setq n1 (genstmtno))
 	(setq *endofloopstack* (cons n1 *endofloopstack*))
-	(setq hi (car (delete1 '> (delete1 '< (delete1 var exitcond)))))
+	(setq hi (car (delete1 'greaterp
+			       (delete1 'lessp (delete1 var exitcond)))))
 	(setq incr (car (delete1 'plus (delete1 var nextexp))))
 	(setq result (mkffortdo n1 var lo hi incr))
 	(indentfortlevel (+ 1))
@@ -360,7 +361,7 @@
 		    lo
 		    (equal (car nextexp) 'plus)
 		    (member var nextexp)
-		    (member (car exitcond) '(> <))
+		    (member (car exitcond) (list 'greaterp 'lessp))
 		    (member var exitcond))
 	       (return (fortdo var lo nextexp exitcond body)))
 	      ((and exitcond

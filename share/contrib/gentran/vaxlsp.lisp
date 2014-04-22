@@ -15,7 +15,10 @@
 ;;  vaxlsp.l     ;;    lisp code generation module
 ;;  -----------  ;;
 
-(defvar lefttype 'real)
+(defun  lefttype () 
+  (if *float 'real
+      'integer))
+
 (declare-top (special *float allnum expty oincr onextexp tvname))
 
 ;; *float is a flag set to t to cause all constants to be floated
@@ -54,7 +57,7 @@
 		(cond ((equal ind 0)
 
 		       (setq expty (exptype  context ))
-		       (cond(allnum (setq expty lefttype)))
+		       (cond(allnum (setq expty (lefttype))))
 				;;solve all numbers in an expression
 
 		       (cond ((eq expty 'integer)
@@ -157,7 +160,8 @@
 	       (return (exptype (caar exp))) ))
 
 	(cond ((member (car exp)
-	       '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) )
+		       '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) 
+		       :test #'equal)
 	       (setq ty1 'integer))
 	      (t (setq ty1 (exptype (car exp)))))
 

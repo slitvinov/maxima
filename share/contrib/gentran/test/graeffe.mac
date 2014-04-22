@@ -20,4 +20,4 @@ gentran( subroutine( graeff(a,b) ),
 for i:1 thru n+1 do
           gentran( lrsetq( b[i], b[i-1] ) );
 gentran( return(), end() );
-gentranpop(false);
+gentranshut("graeffe.f");

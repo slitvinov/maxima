@@ -59,14 +59,14 @@
   (gentranoutpush flist t))
 
 
-(defmspec $gentranshut (flist)
+(defun $gentranshut (&rest flist)
   ;                                                                 ;
   ;  gentranshut(f1,f2,...,fn);  -->  (gentranshut (f1 f2 ... fn))  ;
   ;                                                                 ;
-  (gentranshut (cdr flist)))
+  (gentranshut flist))
 
 
-(defun $gentranpush (flist)
+(defun $gentranpush (&rest flist)
   ;                                                                        ;
   ;  gentranpush(f1,f2,...,fn);  -->  (gentranoutpush (f1 f2 ... fn) nil)  ;
   ;                                                                        ;
@@ -79,7 +79,7 @@
   (gentranoutpush flist nil))
 
 
-(defmspec $gentranpop (flist)
+(defun $gentranpop (&rest flist)
   ;                                                               ;
   ;  gentranpop(f1,f2,...,fn);  -->  (gentranpop (f1 f2 ... fn))  ;
   ;                                                               ;
@@ -238,7 +238,7 @@
   (prog (fp)
 	(setq flist (preproc flist))
 	(cond ((member '$all flist)
-	       (while (> (length *outstk*) 1)
+	       (gentran-while (> (length *outstk*) 1)
 		      (gentranpop '(nil)))
 	       (return (car *currout*))))
 	(setq flist (fargstonames flist nil))
@@ -396,7 +396,7 @@
 	(setq *gentranlang lang)
 	(setq flag (intern (compress (append (explode2 '*)
 					     (explode2 lang)))))
-	(while (eval flag)
+	(gentran-while (eval flag)
 	       (progn
 		 (setq exp (gentranswitch1 (list ($readvexp *currin*))))
 		(eval (list 'gentran (list 'quote exp) 'nil))))
