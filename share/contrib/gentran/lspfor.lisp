@@ -204,11 +204,11 @@
 	((lispassignp stmt) (fortassign stmt))
 	((lispprintp stmt) (fortwrite stmt))
 	((lispcondp stmt) (fortif stmt))
-	((lispbreakp stmt) (fortbreak stmt))
+	((lispbreakp stmt) (fortbreak))
 	((lispgop stmt) (fortgoto stmt))
 	((lispreturnp stmt) (fortreturn stmt))
-	((lispstopp stmt) (fortstop stmt))
-	((lispendp stmt) (fortend stmt))
+	((lispstopp stmt) (fortstop))
+	((lispendp stmt) (fortend))
 	((lispdop stmt) (fortloop stmt))
 	((lispstmtgpp stmt) (fortstmtgp stmt))
 	((lispdefp stmt) (fortsubprog stmt))
@@ -217,7 +217,7 @@
 (defun fortassign (stmt)
   (mkffortassign (cadr stmt) (caddr stmt)))
 
-(defun fortbreak (stmt)
+(defun fortbreak ()
   (cond ((null *endofloopstack*)
 	 (gentranerr 'e nil "break not inside loop - cannot be translated" nil))
 	((atom (car *endofloopstack*))
@@ -250,7 +250,7 @@
 	(setq *endofloopstack* (cdr *endofloopstack*))
 	(return result)))
 
-(defun fortend (stmt)
+(defun fortend ()
   (mkffortend))
 
 (defun fortfor (var lo nextexp exitcond body)
@@ -345,7 +345,7 @@
 )
 
 (defun fortloop (stmt)
-  (prog (var lo nextexp exitcond body r)
+  (prog (var lo nextexp exitcond body)
 	(cond ((complexdop stmt)
 	       (return (fortstmt (seqtogp (simplifydo stmt))))))
 	(cond ((setq var (cadr stmt))
@@ -420,7 +420,7 @@
 	       (setq stmtno (put label '*stmtno* (genstmtno)))))
 	(return (mkffortcontinue stmtno))))
 
-(defun fortstop (stmt)
+(defun fortstop ()
   (mkffortstop))
 
 (defun fortwhile (exitcond body)

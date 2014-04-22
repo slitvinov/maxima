@@ -144,7 +144,8 @@
 
 (defun exec (program)
   #+clisp (EXT:RUN-PROGRAM program)
-  #+cmu (ext:run-program program))
+  #+cmu (ext:run-program program)
+  #+sbcl (sb-ext:run-program program))
 
 (defmacro prettyprint (m)
 ;                                                      ;
