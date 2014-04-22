@@ -6,6 +6,7 @@ batch("~/src/maxima-code/share/contrib/gentran/test/rtest_gentran.mac", 'test);
 0$
 
 (file_search_maxima: cons("/home/vital303/src/maxima-code/share/contrib/gentran/###.lisp", file_search_maxima),
+  file_search_maxima: cons("/home/litvinov/src/maxima-code/share/contrib/gentran/###.lisp", file_search_maxima),
   load("gentran.lisp"),
   delete_file(infile):= block([f], f: openw(infile), close(f)),
   read_file_to_strings(infile):= block([l, st: openr(infile), out: []],
@@ -62,11 +63,13 @@ gentranlang('fortran);
 
 /* loops */
 
+/*
 load("init.lisp");
 gentranlang('ratfor);
 off(gendecs);
 gentran_to_strings ( for i: 1 thru 10 do q: i);
 gentran_to_strings ( for i: -10 thru -20 do q: i);
+*/
 
 (delete_file("di.f"),
   gentranlang('fortran),
