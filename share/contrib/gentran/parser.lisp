@@ -23,7 +23,7 @@
 ;;                                            ;;
 
 
-(defun gentranparse (forms)
+(defun gentranparser (forms)
   (foreach f in forms do
 	   (cond ((not (or (pmstmt f)
 			   (pmexp f)

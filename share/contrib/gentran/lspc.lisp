@@ -188,10 +188,10 @@
 	((equal (car stmt) 'literal) (cliteral stmt))
 	((lispassignp stmt) (cassign stmt))
 	((lispcondp stmt) (cif stmt))
-	((lispbreakp stmt) (cbreak stmt))
+	((lispbreakp stmt) (cbreak))
 	((lispgop stmt) (cgoto stmt))
 	((lispreturnp stmt) (creturn stmt))
-	((lispstopp stmt) (cexit stmt))
+	((lispstopp stmt) (cexit))
 	((lispdop stmt) (cloop stmt))
 	((lispstmtgpp stmt) (cstmtgp stmt))
 	((lispdefp stmt) (cproc stmt))
@@ -200,10 +200,10 @@
 (defun cassign (stmt)
   (mkfcassign (cadr stmt) (caddr stmt)))
 
-(defun cbreak (stmt)
+(defun cbreak ()
   (mkfcbreak))
 
-(defun cexit (stmt)
+(defun cexit ()
   (mkfcexit))
 
 (defun cexpstmt (exp)

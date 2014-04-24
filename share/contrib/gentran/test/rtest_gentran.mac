@@ -65,10 +65,23 @@ gentranlang('fortran);
 
 /*
 load("init.lisp");
-gentranlang('ratfor);
+gentranlang('fortran);
 off(gendecs);
-gentran_to_strings ( for i: 1 thru 10 do q: i);
+
+on(float);
+:lisp (trace itemtype)
+:lisp (trace exptype)
+:lisp (trace franzexp)
+gentran  ( for i: 1 thru 10 do p: 42);
+
 gentran_to_strings ( for i: -10 thru -20 do q: i);
+*/
+
+/*
+:lisp (setq sb-ext:*evaluator-mode* :compile)
+:lisp (declaim (optimize (debug 3)))
+:lisp (trace gentranin)
+:lisp (trace gentranswitch)
 */
 
 (delete_file("di.f"),
