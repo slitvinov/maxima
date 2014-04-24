@@ -55,11 +55,10 @@
 
 	 (cond ((numberp exp)
 		(cond ((equal ind 0)
-
+		       
 		       (setq expty (exptype  context ))
 		       (cond(allnum (setq expty (lefttype))))
-				;;solve all numbers in an expression
-
+		       ;;solve all numbers in an expression
 		       (cond ((eq expty 'integer)
 			       exp)
 			     ((eq expty 'real)
@@ -92,8 +91,7 @@
 	((eq (caar exp) '$gquote) (cadr exp)) ;; gquote added by pwang 11/10/86
 	((eq (caar exp) 'mtimes)
 	 (simptimes1 (foreach term in (cdr exp) collect
-			      (franzexp term 0 exp))
-		      0 ))
+			      (franzexp term 0 exp))))
 
 	((eq (caar exp) 'mexpt)
 	 ; ((mexpt) x -1) --> (quotient 1.0 x)                    ;
@@ -219,7 +217,7 @@
 	       (return (apply 'concat cnum)))
 	      (t (return (intern (format nil "(~a.0,0.0)" num)))))))
 
-(defun simptimes1 (terms fp)
+(defun simptimes1 (terms)
   (let ((neg) (denoms))
        (setq terms
 	     (foreach trm in (simptimes2 terms) conc
@@ -269,12 +267,12 @@
 	((macassignp stmt) (franzassign stmt))
 	((macifp stmt) (franzif stmt))
 	((macforp stmt) (franzfor stmt))
-	((macforinp stmt) (franzforin stmt))
+	((macforinp stmt) (franzforin))
 	((macgop stmt) (franzgo stmt))
 	((macretp stmt) (franzret stmt))
 	((macprintp stmt) (franzprint stmt))
 	((macstopp stmt) (franzstop stmt))
-	((macendp stmt) (franzend stmt))
+	((macendp stmt) (franzend))
 	((mac$literalp stmt) (franzliteral (stripdollar1 (caar stmt)) stmt))
 	((maccallp stmt) (franzcall stmt))))
 
@@ -442,7 +440,7 @@
 	      (setq doexit (list (cons 'or doexit)))))
        `(do ,dovars ,doexit ,dobody))))
 
-(defun franzforin (stmt)
+(defun franzforin ()
   ; return the franz lisp representation for a for-in statement             ;
   ; ((mdoin) dovar dolist nil nil nil doexitcond dobody)                    ;
   ;   -->  (do ((genvar 1 (+ genvar 1)))                                 ;
@@ -502,7 +500,7 @@
   ; return the franz lisp representation for a stop statement ;
   '(stop))
 
-(defun franzend (stmt)
+(defun franzend ()
   ; return the franz lisp representation for an end statement ;
   '(end))
 

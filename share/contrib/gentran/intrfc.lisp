@@ -258,15 +258,15 @@
 		    (cons '(mlist)
 			  (cdr *currout*))))))
 
-
 (defun gentranin (inlist outlist)
-  (prog (holdich)
+  (prog ((holdich)
+	 (nilstream (make-concatenated-stream)))
 	(foreach inf in (setq inlist (preproc inlist)) do
 		 (cond ((listp inf)
 			(gentranerr 'e inf "wrong type of arg" nil))))
 	(cond (outlist
 	       (eval (list 'gentranoutpush (list 'quote outlist) nil))))
-	(setq holdich (rds nil))
+	(setq holdich (rds nilstream))
 	(foreach inf in inlist do
 		 (progn
 		  (cond ((equal inf (car *stdin*))
