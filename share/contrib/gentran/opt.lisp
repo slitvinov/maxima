@@ -10,7 +10,7 @@
 (when (null (fboundp 'wrs)) (load "convmac.lisp"))
 
 (declare-top (special *gentran-dir tempvartype* tempvarname* tempvarnum* genstmtno*
-	genstmtincr* *symboltable* *instk* *stdin* *currin* *outstk*
+	*gentappend genstmtincr* *symboltable* *instk* *stdin* *currin* *outstk*
 	*stdout* *currout* *outchanl* *lispdefops* *lisparithexpops*
 	*lisplogexpops* *lispstmtops* *lispstmtgpops*))
 ;;  --------  ;;
