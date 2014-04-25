@@ -146,61 +146,46 @@
 
 ;;	Following several functions were added by Trevor 12/86
 
-( defun exptype ( exp )
-    ( prog(ty1 ty2)
-;;(terpri)
-;;(print "enter exptype with")
-;;(print exp)
-	( cond ( ( null exp ) ( return 'integer ) ) )
-	( cond ( ( atom exp ) ( return ( itemtype exp ) ) ) )
+(defun exptype (exp)
+  (prog(ty1 ty2)
+     (cond ((null exp) (return 'integer)))
+     (cond ((atom exp) (return (itemtype exp))))
 
-	(cond ((and (listp (car exp)) (eq 'array (cadar exp)))
-	       (return (exptype (caar exp))) ))
+     (cond ((and (listp (car exp)) (eq 'array (cadar exp)))
+	    (return (exptype (caar exp)))))
 
-	(cond ((member (car exp)
-		       '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) 
-		       :test #'equal)
-	       (setq ty1 'integer))
-	      (t (setq ty1 (exptype (car exp)))))
+     (cond ((member (car exp)
+		    '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) 
+		    :test #'equal)
+	    (setq ty1 'integer))
+	   (t (setq ty1 (exptype (car exp)))))
 
-	(setq ty2 (exptype (cdr exp)))
-;;(terpri)
-;;(print "ty1 -- ")
-;;(print ty1)
-;;(terpri)
-;;(print "ty2 -- ")
-;;(print ty2)
-	(cond((or (eq ty1 'complex) (eq ty2 'complex))
-	      (return 'complex)))
+     (setq ty2 (exptype (cdr exp)))
 
-	(cond((or (eq ty1 'double) (eq ty2 'double))
-	      (return 'double)))
+     (cond ((or (eq ty1 'complex) (eq ty2 'complex))
+	    (return 'complex)))
 
-	(cond((or (eq ty1 'real) (eq ty2 'real))
-	      (return 'real)))
+     (cond ((or (eq ty1 'double) (eq ty2 'double))
+	    (return 'double)))
 
-	(cond((and (eq ty1 'integer) (eq ty2 'integer))
-	      (return 'integer))
-	     (t (return 'nil)))  ))
+     (cond ((or (eq ty1 'real) (eq ty2 'real))
+	    (return 'real)))
+
+     (cond ((and (eq ty1 'integer) (eq ty2 'integer))
+	    (return 'integer))
+	   (t (return 'nil)))))
 
 
-;;	( cond ( ( and ( numberp ( cadr exp ) )
-;;		       ( numberp ( caddr exp ) ) )
-;;		 ( return expty ) ) )
-
-
-( defun itemtype ( item )
-    ( prog()
-;;(print "enter itemtype with")
-;;(print item)
-	( cond ( ( numberp item )
-		 ( cond ( ( floatp item ) ( return 'real ) )
-			( t ( return 'integer ) )  ))
-	       ( t
-		 (setq allnum nil)
-			;; set flag to to nil to show
-			;; not all numbers in an expression
-		 ( return ( getvartype (stripdollar1 item)) ) )  )))
+(defun itemtype (item)
+  (prog()
+     (cond ((numberp item)
+	    (cond ((floatp item) (return 'real ))
+		  (t (return 'integer))))
+	   (t
+	    (setq allnum nil)
+	    ;; set flag to to nil to show
+	    ;; not all numbers in an expression
+	    (return (getvartype (stripdollar1 item)))))))
 
 (defun double (num)
     (prog (dnum)
