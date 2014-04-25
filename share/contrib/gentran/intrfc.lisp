@@ -238,7 +238,7 @@
   (prog (fp)
 	(setq flist (preproc flist))
 	(cond ((member '$all flist)
-	       (gentran-while (> (length *outstk*) 1)
+	       (while (> (length *outstk*) 1)
 		      (gentranpop '(nil)))
 	       (return (car *currout*))))
 	(setq flist (fargstonames flist nil))
@@ -396,7 +396,7 @@
 	(setq *gentranlang lang)
 	(setq flag (intern (compress (append (explode2 '*)
 					     (explode2 lang)))))
-	(gentran-while (eval flag)
+	(while (eval flag)
 	       (progn
 		 (setq exp (gentranswitch1 (list ($readvexp *currin*))))
 		(eval (list 'gentran (list 'quote exp) 'nil))))
