@@ -145,7 +145,7 @@
 		(res1))
 	       (setq exp (cdr exp))
 	       (cond ((eq op '+)
-		      (gentran-while (setq exp (cdr exp))
+		      (while (setq exp (cdr exp))
                          (progn
 			  (setq res1 (ratexpgen1 (car exp) wt))
 			  (cond ((or (eq (car res1) '-)
@@ -155,7 +155,7 @@
 				(t
 				 (setq res (append res (cons op res1))))))))
 		     (t
-		      (gentran-while (setq exp (cdr exp))
+		      (while (setq exp (cdr exp))
                          (setq res (append res
 					   (cons op
 						 (ratexpgen1 (car exp) wt)))))))
@@ -255,7 +255,7 @@
 	(setq r (append r (ratstmt st)))
 	(indentratlevel (- 1))
 	(setq stmt (cdr stmt))
-	(gentran-while (and (setq stmt (cdr stmt))
+	(while (and (setq stmt (cdr stmt))
 		    (not (eq (caar stmt) t)))
 	       (progn
 		(setq r (append r (mkfratelseif (caar stmt))))

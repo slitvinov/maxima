@@ -30,7 +30,7 @@
 	((eq (caar code) 'setq)
 	 (prog (setqseq)
 	       (setq setqseq (list (car code)))
-	       (gentran-while (and (setq code (cdr code))
+	       (while (and (setq code (cdr code))
 			   (listp (car code))
 			   (eq (caar code) 'setq))
 		      (setq setqseq (aconc setqseq (car code))))

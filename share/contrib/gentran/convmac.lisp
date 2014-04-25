@@ -206,17 +206,6 @@
   `(dotimes (i ,m) (princ " ")))
 
 
-(defmacro gentran-while (exp stmt)
-;                                                          ;
-; (while exp stmt)  -->  (prog ()                          ;
-;                              loop                        ;
-;                              (cond (exp                  ;
-;                                     stmt                 ;
-;                                     (go loop))))         ;
-;                                                          ;
-  `(while ,exp ,stmt))
-
-
 (defmacro wrs (m)
 ;                                                  ;
 ; (wrs arg)  -->  (prog1 poport (setq poport arg)) ;

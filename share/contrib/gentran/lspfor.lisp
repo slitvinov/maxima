@@ -160,7 +160,7 @@
 		(res1))
 	       (setq exp (cdr exp))
 	       (cond ((eq op '+)
-		      (gentran-while (setq exp (cdr exp))
+		      (while (setq exp (cdr exp))
                          (progn
 			  (setq res1 (fortexp1 (car exp) wt))
 			  (cond ((or (eq (car res1) '-)
@@ -170,7 +170,7 @@
 				(t
 				 (setq res (append res (cons op res1))))))))
 		     (t
-		      (gentran-while (setq exp (cdr exp))
+		      (while (setq exp (cdr exp))
                          (setq res (append res
 					   (cons op
 						 (fortexp1 (car exp) wt)))))))
@@ -179,7 +179,7 @@
 	(t
 	 (let ((res (cons (car exp) (cons '|(| (fortexp1 (cadr exp) 0)))))
               (setq exp (cdr exp))
-	      (gentran-while (setq exp (cdr exp))
+	      (while (setq exp (cdr exp))
                  (setq res (append res (cons '|,| (fortexp1 (car exp) 0)))))
               (aconc res '|)|)))))
 
