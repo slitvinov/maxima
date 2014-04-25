@@ -83,7 +83,7 @@
   ;                                                               ;
   ;  gentranpop(f1,f2,...,fn);  -->  (gentranpop (f1 f2 ... fn))  ;
   ;                                                               ;
-  (gentranpop (cdr flist)))
+  (gentranpop flist))
 
 
 (defmspec $gentranin (forms)
