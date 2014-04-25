@@ -152,7 +152,7 @@ block([f: 10], gentranlang('fortran), gentran_to_strings(u : eval(f)));
  "      poly=t11+c(19)*x**18+c(20)*x**19+c(21)*x**20"]$
 
 (load("init.lisp"),
-  off(float),
+  on(float),
   delete_file("array.f"),
   kill(mat),
   batchload("array.mac"),
@@ -178,7 +178,7 @@ true$
 
 
 (load("init.lisp"),
-  off(float),
+  on(float),
   delete_file("graeffe.f"),
   batchload("graeffe.mac"),
   compare_files("graeffe.f", "graeffe.output"));
@@ -195,3 +195,17 @@ true$
   compare_files("matrix.f", "matrix.output"));
 true$
 
+
+/* this fails
+gentranpush("d.dat", "p.dat");
+gentran( a : 42);
+gentranpop(false);
+
+:lisp (trace exptype)
+:lisp (trace itemtype)
+:lisp (trace franzexp)
+gentranlang(c);
+off(float);
+gentran( for i: 1 thru 10 do p[round(x+10)] : 10 );
+
+*/
