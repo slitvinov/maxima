@@ -225,4 +225,10 @@ gentran( for i: 1 thru 10 do p[round(x+10)] : 10 );
 ans: diff(exp(y+x^2)/(y+x),x,2);
 gentran ( rsetq(ans, ans) );
 
+off(gentranappend);
+gentran (a : 10, ["u.dat"]);
+
+on(gentranappend);
+gentran (a : 10, ["u.dat"]);
+
 */

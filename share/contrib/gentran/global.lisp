@@ -7,7 +7,7 @@
 (when (null (fboundp 'wrs)) (load "convmac.lisp"))
 
 (declare-top (special *gentranlang *gentran-dir tempvartype* tempvarname* tempvarnum* genstmtno*
-	genstmtincr* *symboltable* *instk* *stdin* *currin* *outstk*
+	*gentranappend genstmtincr* *symboltable* *instk* *stdin* *currin* *outstk*
 	*stdout* *currout* *outchanl* *lispdefops* *lisparithexpops*
 	*lisplogexpops* *lispstmtops* *lispstmtgpops*))
 ;;  -----------  ;;
@@ -243,7 +243,9 @@
 
 (defun mkfilpr (fname)
   ; open output channel & return filepair (fname . chan#) ;
-  (cons fname (open fname :direction :output :if-exists :append :if-does-not-exist :create)))
+  (cons fname (if *gentranappend
+		  (open fname :direction :output :if-exists :append :if-does-not-exist :create)
+		  (open fname :direction :output :if-exists :supersede :if-does-not-exist :create))))
 
 (defun pfilpr (flist stk)
   ; retrieve flist's "parallel" filepair from stack stk ;

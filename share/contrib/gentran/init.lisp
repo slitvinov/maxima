@@ -62,6 +62,7 @@
 (setq *gentranopt    nil)
 (setq *gentranparser nil)
 (setq *gentranseg    t)
+(setq *gentranappend t)
 
 ;;  user-accessible global variables  ;;
 
