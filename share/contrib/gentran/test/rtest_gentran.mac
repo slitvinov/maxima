@@ -176,7 +176,6 @@ gentran_to_strings(data("a(10)", 3.1416159, 9.0, 8.1728907,
   compare_files("for.f", "for.output"));
 true$
 
-
 (load("init.lisp"),
   on(float),
   delete_file("graeffe.f"),
@@ -197,9 +196,13 @@ true$
 
 
 /* this fails
-gentranpush("d.dat", "p.dat");
-gentran( a : 42);
-gentranpop(false);
+gentranpush(true);
+gentran ( a : 10);
+:lisp (trace pushstk)
+:lisp (trace gentranoutpush)
+:lisp (trace filpr)
+:lisp (trace mkfilpr)
+
 
 :lisp (trace exptype)
 :lisp (trace itemtype)
