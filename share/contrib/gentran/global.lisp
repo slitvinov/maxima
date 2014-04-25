@@ -19,6 +19,20 @@
 ;;  1. temporary variable generation, marking & unmarking functions  ;;
 ;;                                                                   ;;
 
+;; true if a variable name `tvar' of unknown type can be used as a temporary 
+(defun good-var-unknown-namep (tvar)
+  (and (not (markedvarp tvar))
+       (not (get tvar '*vtype*))
+       (not (getvartype tvar))))
+
+;; true if a variable name `tvar' of known type `type' can be used as
+;; a temporary
+(defun good-var-known-namep (tvar type)
+  (and (not (markedvarp tvar))
+       (or (equal (get tvar '*vtype*) type)
+	   (and (not (get tvar '*vtype*))
+		(getvartype tvar)))))
+
 
 (defun tempvar (type)
   ;                                                           ;
@@ -40,16 +54,25 @@
   ;                                                           ;
   ; return var                                                ;
   ;                                                           ;
-  (prog (tvar num)
+  (prog (tvar xname num)
 (cond (tempvartype* (setq tempvartype* (stripdollar1 tempvartype*))))
 	(cond ((member type '(nil 0)) (setq type tempvartype*)))
 (cond (type (setq type (stripdollar1 type))))
 (setq tempvarname* (stripdollar1 tempvarname*))
+	(setq xname (explode2 tempvarname*))
 	(setq num tempvarnum*)
 	(cond ((member type '(nil unknown))
-	       (setq tvar (gentemp (string tempvarname*))))
+	       (repeat (progn
+			(setq tvar (intern (compress (append xname
+							     (explode2 num)))))
+			(setq num (1+ num)))
+		       (good-var-unknown-namep tvar)))
 	      (t
-	       (setq tvar (gentemp (string tempvarname*)))))
+	       (repeat (progn
+			(setq tvar (intern (compress (append xname
+							     (explode2 num)))))
+			(setq num (1+ num)))
+		       (good-var-known-namep tvar type))))
 	(put tvar '*vtype* type)
 	(cond ((equal type 'unknown)
 	       (gentranerr 'w tvar "undeclared variable" nil))
