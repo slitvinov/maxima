@@ -19,7 +19,7 @@
   (if *float 'real
       'integer))
 
-(declare-top (special *float allnum expty oincr onextexp tvname))
+(declare-top (special *float expty oincr onextexp tvname))
 
 ;; *float is a flag set to t to cause all constants to be floated
 
@@ -49,15 +49,10 @@
 
 
 (defun franzexp (exp ind context)
-
-  (setq allnum t ) ;;set flag to check if all numbers in an expression
   (cond ((atom exp)
-
 	 (cond ((numberp exp)
 		(cond ((equal ind 0)
-		       
-		       (setq expty (exptype  context ))
-		       (cond(allnum (setq expty (lefttype))))
+		       (setq expty (lefttype))
 		       ;;solve all numbers in an expression
 		       (cond ((eq expty 'integer)
 			       exp)
@@ -182,9 +177,6 @@
 	    (cond ((floatp item) (return 'real ))
 		  (t (return 'integer))))
 	   (t
-	    (setq allnum nil)
-	    ;; set flag to to nil to show
-	    ;; not all numbers in an expression
 	    (return (getvartype (stripdollar1 item)))))))
 
 (defun double (num)
@@ -237,11 +229,6 @@
 		 (t (list trm)))))
 
 (defun franzstmt (stmt)
-  ; return the franz lisp equivalent statement ;
-  (cond ((member (safe-caar stmt) '( msetq mdo ))
-	 (setq lefttype (exptype (cadr stmt))) ))
-		;;added by Trevor 12/28/86
-
   (cond ((null stmt) nil)
 	((maclabelp stmt) (franzlabel stmt))
 	((macstmtgpp stmt) (franzstmtgp stmt))
@@ -386,12 +373,12 @@
    (let (dovars doexit posincr)
        (setq oincr    incr
 	     onextexp nextexp)
-       (setq var      (franzexp var 0 var )
-	     lo       (franzexp lo 0 lo )
-	     incr     (franzexp incr 0 incr )
-	     nextexp  (franzexp nextexp 0 nextexp )
-	     hi       (franzexp hi 0 hi )
-	     exitcond (franzexp exitcond 0 exitcond )
+       (setq var      (franzexp var 1 var )
+	     lo       (franzexp lo 1 lo )
+	     incr     (franzexp incr 1 incr )
+	     nextexp  (franzexp nextexp 1 nextexp )
+	     hi       (franzexp hi 1 hi )
+	     exitcond (franzexp exitcond 1 exitcond )
 	     dobody   (franzstmt dobody))
        (cond ((and (not var) (or lo incr nextexp hi))
 	      (setq tvname tempvarname*)
