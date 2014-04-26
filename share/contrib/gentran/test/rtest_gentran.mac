@@ -202,6 +202,15 @@ true$
   compare_files("matrix.f", "matrix.output"));
 true$
 
+n: 3;
+?maxexpprintlen\* : 60;
+kill(m);
+?tempvarnum\*: 0;
+on(gentranseq);
+off(gentranappend);
+on(gentranopt);
+gentranin("detinv.tem", ["##detinv"]);
+gentranin("##detinv", ["detinv.f"]);
 
 /* this fails
 gentranpush(true);
@@ -230,5 +239,14 @@ gentran (a : 10, ["u.dat"]);
 
 on(gentranappend);
 gentran (a : 10, ["u.dat"]);
+
+
+load("gentran");
+:lisp (trace itemtype)
+:lisp (trace exptype)
+:lisp (trace franzexp)
+on(float);
+gentran(type(integer, a), a/2);
+
 
 */

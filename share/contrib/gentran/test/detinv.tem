@@ -1,0 +1,19 @@
+subroutine detinv(m,det,inv)                          
+<<                                                          
+off(gendecs)$                                         
+gentran( literal("<<    on(gendecs)\$    \>\>", cr) )$
+>>                                                         
+<<                                                          
+m : genmatrix(m, n,n, 1,1)$                           
+gentran( type("real*8", m(eval(n),eval(n))) )$        
+>>                                                          
+<<                                                          
+gentran( type("real*8", det),                         
+     rsetq( det, determinant(m) ) )$              
+>>                                                          
+<<                                                          
+gentran( type("real*8", inv(eval(n),eval(n))),        
+     rsetq( inv, m^^(-1) ) )$                     
+>>                                                          
+return                                                
+end
