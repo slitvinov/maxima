@@ -53,7 +53,6 @@
 	 (cond ((numberp exp)
 		(cond ((equal ind 0)
 		       (setq expty (lefttype))
-		       ;;solve all numbers in an expression
 		       (cond ((eq expty 'integer)
 			       exp)
 			     ((eq expty 'real)
