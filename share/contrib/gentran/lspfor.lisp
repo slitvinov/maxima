@@ -36,26 +36,28 @@
 (put '-        '*fortranprecedence* 7)
 (put 'minus    '*fortranprecedence* 7)
 (put 'expt     '*fortranprecedence* 8)
-(put 'or       '*fortranop* '| .or. |)
-(put 'and      '*fortranop* '| .and. |)
-(put 'not      '*fortranop* '| .not. |)
-(put 'equal    '*fortranop* '| .eq. |)
-(put 'notequal '*fortranop* '| .ne. |)
-(put '>        '*fortranop* '| .gt. |)
-(put 'greaterp '*fortranop* '| .gt. |)
-(put 'geqp     '*fortranop* '| .ge. |)
-(put '<        '*fortranop* '| .lt. |)
-(put 'lessp    '*fortranop* '| .lt. |)
-(put 'leqp     '*fortranop* '| .le. |)
+(put 'or       '*fortranop* '| .OR. |)
+(put 'and      '*fortranop* '| .AND. |)
+(put 'not      '*fortranop* '| .NOT. |)
+(put 'equal    '*fortranop* '| .EQ. |)
+(put 'notequal '*fortranop* '| .NE. |)
+(put '>        '*fortranop* '| .GT. |)
+(put 'greaterp '*fortranop* '| .GT. |)
+(put 'geqp     '*fortranop* '| .GE. |)
+(put '<        '*fortranop* '| .LT. |)
+(put 'lessp    '*fortranop* '| .LT. |)
+(put 'leqp     '*fortranop* '| .LE. |)
 (put '+        '*fortranop* '|+|)
 (put 'plus     '*fortranop* '|+|)
 (put '*        '*fortranop* '|*|)
 (put 'times    '*fortranop* '|*|)
-(put 'quotient '*fortranop* '|//|)
+(put 'quotient '*fortranop* '|/|)
 (put 'expt     '*fortranop* '|**|)
 (put '-        '*fortranop* '|-|)
 (put 'minus    '*fortranop* '|-|)
-(put nil '*fortranname* ".false.")
+(put nil  '*fortranname* ".false.")
+(put '%e  '*fortranname* "EXP(1)")
+(put '%pi '*fortranname* "(4.0*ATAN(1.0))")
 
 ;;                                         ;;
 ;;  lisp-to-fortran translation functions  ;;
@@ -202,11 +204,11 @@
 	((lispassignp stmt) (fortassign stmt))
 	((lispprintp stmt) (fortwrite stmt))
 	((lispcondp stmt) (fortif stmt))
-	((lispbreakp stmt) (fortbreak stmt))
+	((lispbreakp stmt) (fortbreak))
 	((lispgop stmt) (fortgoto stmt))
 	((lispreturnp stmt) (fortreturn stmt))
-	((lispstopp stmt) (fortstop stmt))
-	((lispendp stmt) (fortend stmt))
+	((lispstopp stmt) (fortstop))
+	((lispendp stmt) (fortend))
 	((lispdop stmt) (fortloop stmt))
 	((lispstmtgpp stmt) (fortstmtgp stmt))
 	((lispdefp stmt) (fortsubprog stmt))
@@ -215,7 +217,7 @@
 (defun fortassign (stmt)
   (mkffortassign (cadr stmt) (caddr stmt)))
 
-(defun fortbreak (stmt)
+(defun fortbreak ()
   (cond ((null *endofloopstack*)
 	 (gentranerr 'e nil "break not inside loop - cannot be translated" nil))
 	((atom (car *endofloopstack*))
@@ -233,7 +235,8 @@
   (prog (n1 hi incr result)
 	(setq n1 (genstmtno))
 	(setq *endofloopstack* (cons n1 *endofloopstack*))
-	(setq hi (car (delete1 '> (delete1 '< (delete1 var exitcond)))))
+	(setq hi (car (delete1 'greaterp
+			       (delete1 'lessp (delete1 var exitcond)))))
 	(setq incr (car (delete1 'plus (delete1 var nextexp))))
 	(setq result (mkffortdo n1 var lo hi incr))
 	(indentfortlevel (+ 1))
@@ -247,7 +250,7 @@
 	(setq *endofloopstack* (cdr *endofloopstack*))
 	(return result)))
 
-(defun fortend (stmt)
+(defun fortend ()
   (mkffortend))
 
 (defun fortfor (var lo nextexp exitcond body)
@@ -327,9 +330,9 @@
 
 ;; fortdata added by pwang 12/12/88
 (defun fortdata (stmt)
-  (append (list (mkforttab) "data " (cadr stmt) '|//|)
+  (append (list (mkforttab) "data " (cadr stmt) '|/|)
 	  (addcom (cddr stmt))
-	  (list '|//|))
+	  (list '|/|))
 )
 
 (setq COMMA* ",")
@@ -342,7 +345,7 @@
 )
 
 (defun fortloop (stmt)
-  (prog (var lo nextexp exitcond body r)
+  (prog (var lo nextexp exitcond body)
 	(cond ((complexdop stmt)
 	       (return (fortstmt (seqtogp (simplifydo stmt))))))
 	(cond ((setq var (cadr stmt))
@@ -358,7 +361,7 @@
 		    lo
 		    (equal (car nextexp) 'plus)
 		    (member var nextexp)
-		    (member (car exitcond) '(> <))
+		    (member (car exitcond) (list 'greaterp 'lessp))
 		    (member var exitcond))
 	       (return (fortdo var lo nextexp exitcond body)))
 	      ((and exitcond
@@ -417,7 +420,7 @@
 	       (setq stmtno (put label '*stmtno* (genstmtno)))))
 	(return (mkffortcontinue stmtno))))
 
-(defun fortstop (stmt)
+(defun fortstop ()
   (mkffortstop))
 
 (defun fortwhile (exitcond body)

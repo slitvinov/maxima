@@ -40,9 +40,12 @@
 (put 'leqp     '*ratforop* '|<=|)
 (put 'plus     '*ratforop* '|+|)
 (put 'times    '*ratforop* '|*|)
-(put 'quotient '*ratforop* '|//|)
+(put 'quotient '*ratforop* '|/|)
 (put 'expt     '*ratforop* '|**|)
 (put 'minus    '*ratforop* '|-|)
+(put '%e '*ratfornname* "exp(1)")
+(put '%pi '*ratforname* "(4.0*atan(1.0))")
+
 
 ;;                                        ;;
 ;;  lisp-to-ratfor translation functions  ;;
@@ -166,7 +169,7 @@
               (aconc res '|)| )))))
 
 (defun ratforname (name)
-  (or (get name '*ratforname*) name))
+  (if (symbolp name) (or (get name '*ratforname*) name) name))
 
 (defun ratforop (op)
   (or (get op '*ratforop*) op))
@@ -186,11 +189,11 @@
 	((lispassignp stmt) (ratassign stmt))
 	((lispprintp stmt) (ratwrite stmt))
 	((lispcondp stmt) (ratif stmt))
-	((lispbreakp stmt) (ratbreak stmt))
+	((lispbreakp stmt) (ratbreak))
 	((lispgop stmt) (ratgoto stmt))
 	((lispreturnp stmt) (ratreturn stmt))
-	((lispstopp stmt) (ratstop stmt))
-	((lispendp stmt) (ratend stmt))
+	((lispstopp stmt) (ratstop))
+	((lispendp stmt) (ratend))
 	((lispdop stmt) (ratloop stmt))
 	((lispstmtgpp stmt) (ratstmtgp stmt))
 	((lispdefp stmt) (ratsubprog stmt))
@@ -199,7 +202,7 @@
 (defun ratassign (stmt)
   (mkfratassign (cadr stmt) (caddr stmt)))
 
-(defun ratbreak (stmt)
+(defun ratbreak ()
   (mkfratbreak))
 
 (defun ratcall (stmt)
@@ -216,7 +219,7 @@
 	(indentratlevel (- 1))
 	(return r)))
 
-(defun ratend (stmt)
+(defun ratend ()
   (mkfratend))
 
 (defun ratforfor (var lo nextexp cond body)
@@ -281,7 +284,7 @@
   (mkfratliteral (cdr stmt)))
 
 (defun ratloop (stmt)
-  (prog (var lo nextexp exitcond body r)
+  (prog (var lo nextexp exitcond body)
 	(cond ((complexdop stmt)
 	       (return (ratstmt (seqtogp (simplifydo stmt))))))
 	(cond ((setq var (cadr stmt))
@@ -343,7 +346,7 @@
 			 (put label '*stmtno* (genstmtno))))
 	(return (mkfratcontinue stmtno))))
 
-(defun ratstop (stmt)
+(defun ratstop ()
   (mkfratstop))
 
 (defun ratwhile (cond body)

@@ -96,13 +96,13 @@
   (streamp m))
 
 
-(defmacro flag (&rest m)
+(defmacro flag (varlst fname)
 ;                                                   ;
 ; (flag varlst fname)  -->  (foreach v in varlst do ;
 ;                             (putprop v t fname))  ;
 ;                                                   ;
-  `(foreach v in ,(cadr m) do
-     (putprop v t ,(caddr m))))
+  `(foreach v in ,varlst do
+     (putprop v t ,fname)))
 
 
 (defun flagp (var fname)
@@ -130,7 +130,7 @@
 ;                                     ;
 ; (mkfil arg)  -->  (stripdollar arg) ;
 ;                                     ;
-  (cons 'stripdollar m))
+  (stripdollar m))
 
 
 (defun posn ()
@@ -144,7 +144,8 @@
 
 (defun exec (program)
   #+clisp (EXT:RUN-PROGRAM program)
-  #+cmu (ext:run-program program))
+  #+cmu (ext:run-program program)
+  #+sbcl (sb-ext:run-program program nil))
 
 (defmacro prettyprint (m)
 ;                                                      ;
@@ -203,21 +204,6 @@
 ;		       (princ " "))     ;
 ;                                       ;
   `(dotimes (i ,m) (princ " ")))
-
-
-(defmacro while (exp stmt)
-;                                                          ;
-; (while exp stmt)  -->  (prog ()                          ;
-;                              loop                        ;
-;                              (cond (exp                  ;
-;                                     stmt                 ;
-;                                     (go loop))))         ;
-;                                                          ;
-  `(prog ()
-	 loop
-	 (cond (,exp
-	        ,stmt
-	        (go loop)))))
 
 
 (defmacro wrs (m)

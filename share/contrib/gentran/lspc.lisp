@@ -39,9 +39,12 @@
 (put 'leqp     '*cop* '|<=|)
 (put 'plus     '*cop* '|+|)
 (put 'times    '*cop* '|*|)
-(put 'quotient '*cop* '|//|)
+(put 'quotient '*cop* '|/|)
 (put 'minus    '*cop* '|-|)
 (put 'or       '*cop* "||")
+(put '%e '*cname* "exp(1)")
+(put '%pi '*cname* "(4.0*atan(1.0))")
+
 ;;                                  ;;
 ;;  lisp-to-c transltion functions  ;;
 ;;                                  ;;
@@ -167,7 +170,7 @@
               (aconc res '|)|)))))
 
 (defun cname (name)
-  (or (get name '*cname*) name))
+  (if (symbolp name) (or (get name '*cname*) name) name))
 
 (defun cop (op)
   (or (get op '*cop*) op))
@@ -185,10 +188,10 @@
 	((equal (car stmt) 'literal) (cliteral stmt))
 	((lispassignp stmt) (cassign stmt))
 	((lispcondp stmt) (cif stmt))
-	((lispbreakp stmt) (cbreak stmt))
+	((lispbreakp stmt) (cbreak))
 	((lispgop stmt) (cgoto stmt))
 	((lispreturnp stmt) (creturn stmt))
-	((lispstopp stmt) (cexit stmt))
+	((lispstopp stmt) (cexit))
 	((lispdop stmt) (cloop stmt))
 	((lispstmtgpp stmt) (cstmtgp stmt))
 	((lispdefp stmt) (cproc stmt))
@@ -197,10 +200,10 @@
 (defun cassign (stmt)
   (mkfcassign (cadr stmt) (caddr stmt)))
 
-(defun cbreak (stmt)
+(defun cbreak ()
   (mkfcbreak))
 
-(defun cexit (stmt)
+(defun cexit ()
   (mkfcexit))
 
 (defun cexpstmt (exp)

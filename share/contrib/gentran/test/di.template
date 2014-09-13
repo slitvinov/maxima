@@ -1,0 +1,8 @@
+C fortran code generated from di.template
+      program di
+
+<<
+      gentran( a : 10);
+>>        
+      stop
+      end

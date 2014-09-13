@@ -15,8 +15,11 @@
 ;;  vaxlsp.l     ;;    lisp code generation module
 ;;  -----------  ;;
 
-(defvar lefttype 'real)
-(declare-top (special *float allnum expty oincr onextexp tvname))
+(defun  lefttype () 
+  (if *float 'real
+      'integer))
+
+(declare-top (special *float expty oincr onextexp tvname))
 
 ;; *float is a flag set to t to cause all constants to be floated
 
@@ -46,17 +49,10 @@
 
 
 (defun franzexp (exp ind context)
-
-  (setq allnum t ) ;;set flag to check if all numbers in an expression
   (cond ((atom exp)
-
 	 (cond ((numberp exp)
 		(cond ((equal ind 0)
-
-		       (setq expty (exptype  context ))
-		       (cond(allnum (setq expty lefttype)))
-				;;solve all numbers in an expression
-
+		       (setq expty (lefttype))
 		       (cond ((eq expty 'integer)
 			       exp)
 			     ((eq expty 'real)
@@ -89,8 +85,7 @@
 	((eq (caar exp) '$gquote) (cadr exp)) ;; gquote added by pwang 11/10/86
 	((eq (caar exp) 'mtimes)
 	 (simptimes1 (foreach term in (cdr exp) collect
-			      (franzexp term 0 exp))
-		      0 ))
+			      (franzexp term 0 exp))))
 
 	((eq (caar exp) 'mexpt)
 	 ; ((mexpt) x -1) --> (quotient 1.0 x)                    ;
@@ -145,60 +140,43 @@
 
 ;;	Following several functions were added by Trevor 12/86
 
-( defun exptype ( exp )
-    ( prog(ty1 ty2)
-;;(terpri)
-;;(print "enter exptype with")
-;;(print exp)
-	( cond ( ( null exp ) ( return 'integer ) ) )
-	( cond ( ( atom exp ) ( return ( itemtype exp ) ) ) )
+(defun exptype (exp)
+  (prog(ty1 ty2)
+     (cond ((null exp) (return 'integer)))
+     (cond ((atom exp) (return (itemtype exp))))
 
-	(cond ((and (listp (car exp)) (eq 'array (cadar exp)))
-	       (return (exptype (caar exp))) ))
+     (cond ((and (listp (car exp)) (eq 'array (cadar exp)))
+	    (return (exptype (caar exp)))))
 
-	(cond ((member (car exp)
-	       '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) )
-	       (setq ty1 'integer))
-	      (t (setq ty1 (exptype (car exp)))))
+     (cond ((member (car exp)
+		    '((mplus) (mminus) (mtimes) (mquotient) (mexpt)) 
+		    :test #'equal)
+	    (setq ty1 'integer))
+	   (t (setq ty1 (exptype (car exp)))))
 
-	(setq ty2 (exptype (cdr exp)))
-;;(terpri)
-;;(print "ty1 -- ")
-;;(print ty1)
-;;(terpri)
-;;(print "ty2 -- ")
-;;(print ty2)
-	(cond((or (eq ty1 'complex) (eq ty2 'complex))
-	      (return 'complex)))
+     (setq ty2 (exptype (cdr exp)))
 
-	(cond((or (eq ty1 'double) (eq ty2 'double))
-	      (return 'double)))
+     (cond ((or (eq ty1 'complex) (eq ty2 'complex))
+	    (return 'complex)))
 
-	(cond((or (eq ty1 'real) (eq ty2 'real))
-	      (return 'real)))
+     (cond ((or (eq ty1 'double) (eq ty2 'double))
+	    (return 'double)))
 
-	(cond((and (eq ty1 'integer) (eq ty2 'integer))
-	      (return 'integer))
-	     (t (return 'nil)))  ))
+     (cond ((or (eq ty1 'real) (eq ty2 'real))
+	    (return 'real)))
+
+     (cond ((and (eq ty1 'integer) (eq ty2 'integer))
+	    (return 'integer))
+	   (t (return 'nil)))))
 
 
-;;	( cond ( ( and ( numberp ( cadr exp ) )
-;;		       ( numberp ( caddr exp ) ) )
-;;		 ( return expty ) ) )
-
-
-( defun itemtype ( item )
-    ( prog()
-;;(print "enter itemtype with")
-;;(print item)
-	( cond ( ( numberp item )
-		 ( cond ( ( floatp item ) ( return 'real ) )
-			( t ( return 'integer ) )  ))
-	       ( t
-		 (setq allnum nil)
-			;; set flag to to nil to show
-			;; not all numbers in an expression
-		 ( return ( getvartype (stripdollar1 item)) ) )  )))
+(defun itemtype (item)
+  (prog()
+     (cond ((numberp item)
+	    (cond ((floatp item) (return 'real ))
+		  (t (return 'integer))))
+	   (t
+	    (return (getvartype (stripdollar1 item)))))))
 
 (defun double (num)
     (prog (dnum)
@@ -215,7 +193,7 @@
 	       (return (apply 'concat cnum)))
 	      (t (return (intern (format nil "(~a.0,0.0)" num)))))))
 
-(defun simptimes1 (terms fp)
+(defun simptimes1 (terms)
   (let ((neg) (denoms))
        (setq terms
 	     (foreach trm in (simptimes2 terms) conc
@@ -250,11 +228,6 @@
 		 (t (list trm)))))
 
 (defun franzstmt (stmt)
-  ; return the franz lisp equivalent statement ;
-  (cond ((member (safe-caar stmt) '( msetq mdo ))
-	 (setq lefttype (exptype (cadr stmt))) ))
-		;;added by Trevor 12/28/86
-
   (cond ((null stmt) nil)
 	((maclabelp stmt) (franzlabel stmt))
 	((macstmtgpp stmt) (franzstmtgp stmt))
@@ -265,12 +238,12 @@
 	((macassignp stmt) (franzassign stmt))
 	((macifp stmt) (franzif stmt))
 	((macforp stmt) (franzfor stmt))
-	((macforinp stmt) (franzforin stmt))
+	((macforinp stmt) (franzforin))
 	((macgop stmt) (franzgo stmt))
 	((macretp stmt) (franzret stmt))
 	((macprintp stmt) (franzprint stmt))
 	((macstopp stmt) (franzstop stmt))
-	((macendp stmt) (franzend stmt))
+	((macendp stmt) (franzend))
 	((mac$literalp stmt) (franzliteral (stripdollar1 (caar stmt)) stmt))
 	((maccallp stmt) (franzcall stmt))))
 
@@ -399,12 +372,12 @@
    (let (dovars doexit posincr)
        (setq oincr    incr
 	     onextexp nextexp)
-       (setq var      (franzexp var 0 var )
-	     lo       (franzexp lo 0 lo )
-	     incr     (franzexp incr 0 incr )
-	     nextexp  (franzexp nextexp 0 nextexp )
-	     hi       (franzexp hi 0 hi )
-	     exitcond (franzexp exitcond 0 exitcond )
+       (setq var      (franzexp var 1 var )
+	     lo       (franzexp lo 1 lo )
+	     incr     (franzexp incr 1 incr )
+	     nextexp  (franzexp nextexp 1 nextexp )
+	     hi       (franzexp hi 1 hi )
+	     exitcond (franzexp exitcond 1 exitcond )
 	     dobody   (franzstmt dobody))
        (cond ((and (not var) (or lo incr nextexp hi))
 	      (setq tvname tempvarname*)
@@ -438,7 +411,7 @@
 	      (setq doexit (list (cons 'or doexit)))))
        `(do ,dovars ,doexit ,dobody))))
 
-(defun franzforin (stmt)
+(defun franzforin ()
   ; return the franz lisp representation for a for-in statement             ;
   ; ((mdoin) dovar dolist nil nil nil doexitcond dobody)                    ;
   ;   -->  (do ((genvar 1 (+ genvar 1)))                                 ;
@@ -498,7 +471,7 @@
   ; return the franz lisp representation for a stop statement ;
   '(stop))
 
-(defun franzend (stmt)
+(defun franzend ()
   ; return the franz lisp representation for an end statement ;
   '(end))
 

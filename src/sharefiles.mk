@@ -301,7 +301,6 @@ contrib/gentran/test/array.output \
 contrib/gentran/test/datatest.mac \
 contrib/gentran/test/datatest.out \
 contrib/gentran/test/for.mac \
-contrib/gentran/test/graeffe.f \
 contrib/gentran/test/graeffe.mac \
 contrib/gentran/test/graeffe.output \
 contrib/gentran/test/ham.in \
